@@ -1,0 +1,3 @@
+[submodule "project/addons/enetheru.mp_test"]
+	path = project/addons/enetheru.mp_test
+	url = git@gitlab.com:enetheru/mp_test.git
