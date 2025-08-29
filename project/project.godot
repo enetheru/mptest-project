@@ -21,4 +21,4 @@ GDTaskMgr="*res://addons/enetheru.gdtask/gdtask_mgr.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/enetheru.gdtask/plugin.cfg")
+enabled=PackedStringArray("res://addons/enetheru.enhancements/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg")
