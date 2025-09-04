@@ -22,18 +22,22 @@ func _init() -> void:
 	})
 
 	generator = TestGen.new(self)
-	generator.moves.append( TestMove.new("DoNothing", [], null ) )
+	generator.moves.append( Util.new_from_dict(TestMove.new(), {
+		&'name':"nah yeah",
+		&'name_short':"nah",
+		&'role':&'SERVER'
+	}) )
 
 
 func _compose_status() -> String:
 	return "Status OK"
 
 
-func _requirements() -> Dictionary:
-	var unmet : Dictionary
-	if get_peers( PeerStatus.ASSIGNED ).size() < 2:
-		unmet["Wants Two Peers"] = "This runner requires two peers assigned to work."
-	return unmet
+#func _requirements() -> Dictionary:
+	#var unmet : Dictionary
+	#if get_peers( PeerStatus.ASSIGNED ).size() < 2:
+		#unmet["Wants Two Peers"] = "This runner requires two peers assigned to work."
+	#return unmet
 
 
 func rule_var_is_active( id : int, variable : TestVar ) -> bool:
@@ -42,11 +46,23 @@ func rule_var_is_active( id : int, variable : TestVar ) -> bool:
 
 
 func _setup_states() -> void:
-	var var1 := TestVar.new(self, "Testing Variable One", "var1")
-	var var2 := TestVar.new(self, "Testing Variable Two", "var2")
-	var var3 := TestVar.new(self, "Testing Variable Three", "var3")
+	var var1:TestVar = Util.new_from_dict(TestVar.new(self), {
+		&'name':"Testing Variable One",
+		&'name_short':'var1'
+	})
+	var var2:TestVar = Util.new_from_dict(TestVar.new(self), {
+		&'name':"Testing Variable Two",
+		&'name_short':'var2'
+	})
+	var var3:TestVar = Util.new_from_dict(TestVar.new(self), {
+		&'name':"Testing Variable Three",
+		&'name_short':'var3'
+	})
 
-	var rule1 := TestRule.new("Depends","dep")
+	var rule1:TestRule = Util.new_from_dict(TestRule.new(),{
+		&'name':"Depends",
+		&'name_stub':"dep"
+	})
 	rule1.conditions = [rule_var_is_active.bind(var1)]
 
 	# This rule applies to all Modes
@@ -62,15 +78,21 @@ func _setup_states() -> void:
 
 	starting_state = all_states.front()
 	#starting_state.moves = [TestMove.new(&"SERVER", [], starting_state)]
-	starting_state.moves.push_front(TestMove.new(&"SERVER", [], starting_state))
+	var test_move : TestMove = Util.new_from_dict( TestMove.new(), {
+		&'role':&'SERVER',
+		&'dest':starting_state
+	})
+	starting_state.moves.push_front(test_move)
 
-	server_is_ready.connect(generator.try_moves, CONNECT_ONE_SHOT )
+	server_is_ready.connect( generator.try_moves, CONNECT_ONE_SHOT )
 	# FIXME I have a catch22 here, setup of the states is before
 	# validation, I cant move till I have validation.
 	# but validation requires moves.
 	# I guess I can add a do-nothing move to satisfy the constraint.
 
-func _reset() -> Constant:
+	# I might be able to add a generation step to the test runner?
+
+func _reset( level : ResetLevel ) -> Constant:
 	if server_is_ready.is_connected(generator.try_moves):
 		server_is_ready.disconnect(generator.try_moves)
 	return Constant.OK
