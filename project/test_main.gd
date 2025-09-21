@@ -1,13 +1,7 @@
-extends "res://addons/enetheru.mp_test/runner-base.gd"
+extends 'res://addons/enetheru.mp_test/runner-base.gd'
 
-# State Generation
-const TestGen = preload('res://addons/enetheru.mp_test/scripts/generator.gd')
-const TestVar = preload('res://addons/enetheru.mp_test/scripts/variable.gd')
-const TestRule = preload('res://addons/enetheru.mp_test/scripts/rule.gd')
-const TestCombo = preload('res://addons/enetheru.mp_test/scripts/combo.gd')
 
-var generator : TestGen
-
+var generator : MPT.Generator
 
 
 func _init() -> void:
@@ -21,8 +15,8 @@ func _init() -> void:
 		&'PEER2':0,
 	})
 
-	generator = TestGen.new(self)
-	generator.moves.append( Util.new_from_dict(TestMove.new(), {
+	generator = MPT.Generator.new(self)
+	generator.moves.append( Util.new_from_dict(MPT.Move.new(), {
 		&'name':"nah yeah",
 		&'name_short':"nah",
 		&'role':&'SERVER'
@@ -40,29 +34,42 @@ func _compose_status() -> String:
 	#return unmet
 
 
-func rule_var_is_active( id : int, variable : TestVar ) -> bool:
-	# this rule requires src_var to be in an active state.
-	return id & variable.get_mask()
+func _setup( _level : ResetLevel ) -> Constant:
+	if _level & ResetLevel.FAILURE_STATE: pass
+	if _level & ResetLevel.PROGRAM_STATE: pass
+	if _level & ResetLevel.NETWORK_STATE: pass
+	if _level & ResetLevel.TEST_RESULTS:  pass
+	if _level & ResetLevel.STATE_GRAPH:   _setup_states()
+	if _level & ResetLevel.REPORTING:     pass
+	return Constant.OK
+
+
+func _reset( _level : ResetLevel ) -> Constant:
+	if _level & ResetLevel.FAILURE_STATE: pass
+	if _level & ResetLevel.PROGRAM_STATE: pass
+	if _level & ResetLevel.NETWORK_STATE: pass
+	if _level & ResetLevel.TEST_RESULTS:  pass
+	if _level & ResetLevel.STATE_GRAPH:   pass
+	if _level & ResetLevel.REPORTING:     pass
+	return Constant.OK
 
 
 func _setup_states() -> void:
-	var var1:TestVar = Util.new_from_dict(TestVar.new(self), {
-		&'name':"Testing Variable One",
-		&'name_short':'var1'
-	})
-	var var2:TestVar = Util.new_from_dict(TestVar.new(self), {
-		&'name':"Testing Variable Two",
-		&'name_short':'var2'
-	})
-	var var3:TestVar = Util.new_from_dict(TestVar.new(self), {
-		&'name':"Testing Variable Three",
-		&'name_short':'var3'
-	})
+	var var1 := MPT.Variable.new()
+	var1.id = "v1"
+	var1.desc = "Testing Variable One"
 
-	var rule1:TestRule = Util.new_from_dict(TestRule.new(),{
-		&'name':"Depends",
-		&'name_stub':"dep"
-	})
+	var var2 := MPT.Variable.new()
+	var2.id = "v2"
+	var2.desc = "Testing Variable Two"
+
+	var var3 := MPT.Variable.new()
+	var3.id = "v3"
+	var3.desc = "Testing Variable Three"
+
+
+	var rule1 := MPT.Rule.new()
+	rule1.name = "Depends"
 	rule1.conditions = [rule_var_is_active.bind(var1)]
 
 	# This rule applies to all Modes
@@ -70,21 +77,32 @@ func _setup_states() -> void:
 	# The mask is not shifted left because
 	# the variable has yet to be added to the generator
 
-	generator.add_var( var1 )
-	generator.add_var( var2 )
-	generator.add_var( var3 )
+	generator.add_vars( [var1, var2, var3] )
 
 	all_states.append_array(generator.generate_states())
+	var first_state : MPT.State = all_states.front()
 
-	starting_state = all_states.front()
 	#starting_state.moves = [TestMove.new(&"SERVER", [], starting_state)]
-	var test_move : TestMove = Util.new_from_dict( TestMove.new(), {
-		&'role':&'SERVER',
-		&'dest':starting_state
-	})
-	starting_state.moves.push_front(test_move)
+	var test_move := MPT.Move.new()
 
-	server_is_ready.connect( generator.try_moves, CONNECT_ONE_SHOT )
+	var test_action := MPT.Action.new()
+	test_action.role = &"SERVER"
+	test_action.callables = [a_ok]
+
+	var test_action2 : MPT.Action = test_action.dup()
+	test_action2.role = &'PEER1'
+
+	var test_action3 : MPT.Action = test_action.dup()
+	test_action3.role = &'PEER2'
+
+	test_move.name = "test_move"
+	test_move.desc = "Description of Test Move"
+	test_move.actions_temp = [test_action, test_action2, test_action3]
+	test_move.dest = first_state
+
+	first_state.moves.push_front(test_move)
+
+	#server_is_ready.connect( generator.try_moves, CONNECT_ONE_SHOT )
 	# FIXME I have a catch22 here, setup of the states is before
 	# validation, I cant move till I have validation.
 	# but validation requires moves.
@@ -92,9 +110,13 @@ func _setup_states() -> void:
 
 	# I might be able to add a generation step to the test runner?
 
-func _reset( level : ResetLevel ) -> Constant:
-	if server_is_ready.is_connected(generator.try_moves):
-		server_is_ready.disconnect(generator.try_moves)
+
+func rule_var_is_active( id : int, variable : MPT.Variable ) -> bool:
+	# this rule requires src_var to be in an active state.
+	return id & variable.get_mask()
+
+func a_ok() -> Constant:
+	Util.printy( "a_ok()", null, self )
 	return Constant.OK
 
 #func _setup_states() -> void:
@@ -104,7 +126,7 @@ func _reset( level : ResetLevel ) -> Constant:
 #
 #
 #
-	#var rule := TestRule.new("needs src","")
+	#var rule := MPT.Rule.new("needs src","")
 	#rule.conditions = [rule_var_is_active.bind(src_var)]
 #
 	## This rule applies to all Modes, before being added to the generator
@@ -125,7 +147,7 @@ func _reset( level : ResetLevel ) -> Constant:
 
 
 
-#class SectorVar extends TestVar:
+#class SectorVar extends MPT.Variable:
 	#func _init( _runner : RunnerBase, _name : String, _short_name : String ) -> void:
 		#super(_runner, _name, _short_name)
 		#name = _name
