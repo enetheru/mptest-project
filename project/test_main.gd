@@ -1,4 +1,4 @@
-extends 'res://addons/enetheru.mp_test/scripts/runner-base.gd'
+extends MPTRunner
 
 func _init() -> void:
 	title = "State Generation"
@@ -35,7 +35,7 @@ func _setup( _level : ResetLevel ) -> Constant:
 	if _level & ResetLevel.PROGRAM_STATE: pass
 	if _level & ResetLevel.NETWORK_STATE: pass
 	if _level & ResetLevel.TEST_RESULTS:  pass
-	if _level & ResetLevel.STATE_GRAPH:   _setup_states()
+	if _level & ResetLevel.STATE_GRAPH:   setup_states()
 	if _level & ResetLevel.REPORTING:     pass
 	return Constant.OK
 
@@ -50,23 +50,13 @@ func _reset( _level : ResetLevel ) -> Constant:
 	return Constant.OK
 
 
-func _setup_states() -> void:
-	var var1 := MPTVariable.new()
-	var1.id = "v1"
-	var1.desc = "Testing Variable One"
-
-	var var2 := MPTVariable.new()
-	var2.id = "v2"
-	var2.desc = "Testing Variable Two"
-
-	var var3 := MPTVariable.new()
-	var3.id = "v3"
-	var3.desc = "Testing Variable Three"
+func setup_states() -> void:
+	var var1 := MPTVariable.new("v1", "Testing Variable One")
+	var var2 := MPTVariable.new("v2", "Testing Variable Two")
+	var var3 := MPTVariable.new("v3", "Testing Variable Three")
 
 
-	var rule1 := MPTRule.new()
-	rule1.name = "Depends"
-	rule1.conditions = [rule_var_is_active.bind(var1)]
+	var rule1 := MPTRule.new("Depends", [rule_var_is_active.bind(var1)])
 
 	# This rule applies to all Modes
 	var3.elimination_rules[var3.get_mask()] = rule1
@@ -83,7 +73,7 @@ func _setup_states() -> void:
 
 	var test_action := MPTAction.new()
 	test_action.role = &"SERVER"
-	test_action.callables = [a_ok]
+	test_action.callables = [action_do_nothing]
 
 	var test_action2 : MPTAction = test_action.dup()
 	test_action2.role = &'PEER1'
@@ -110,37 +100,6 @@ func _setup_states() -> void:
 func rule_var_is_active( id : int, variable : MPTVariable ) -> bool:
 	# this rule requires src_var to be in an active state.
 	return id & variable.get_mask()
-
-func a_ok() -> Constant:
-	Util.printy( "a_ok()", null, self )
-	return Constant.OK
-
-#func _setup_states() -> void:
-	#var src_var := SectorVar.new(self, "Source Sector", "src")
-	#var dst_var := SectorVar.new(self, "Destination Sector", "dst")
-	#var obj_var := SectorVar.new(self, "Object", "obj")
-#
-#
-#
-	#var rule := MPTRule.new("needs src","")
-	#rule.conditions = [rule_var_is_active.bind(src_var)]
-#
-	## This rule applies to all Modes, before being added to the generator
-			## the mask will not be shifted into position.
-	#obj_var.rules[obj_var.get_mask()] = rule
-#
-	## I want to place a restriction on adding the object state.
-	## it can only be added if the state of src is non zero.
-	#generator.add_var( src_var )
-	#generator.add_var( dst_var )
-	#generator.add_var( obj_var )
-#
-	#all_states.append_array(generator.generate_states())
-#
-	#var first_state : TestState = all_states.front()
-	#first_state.name = "Start"
-
-
 
 
 #class SectorVar extends MPTVariable:
