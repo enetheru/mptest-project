@@ -66,27 +66,20 @@ func setup_states() -> void:
 	generator.add_vars( [var1, var2, var3] )
 
 	all_states.append_array(generator.generate_states())
+
+	# Fetch the first state from the generation.
 	var first_state : MPTState = all_states.front()
 
 	#starting_state.moves = [TestMove.new(&"SERVER", [], starting_state)]
-	var test_move := MPTMove.new()
+	var test_move := MPTMove.new("test_move","Description of Test Move",
+		[
+			MPTAction.new(&"SERVER", [action_do_nothing]),
+			MPTAction.new(&"PEER1", [action_do_nothing]),
+			MPTAction.new(&"PEER2", [action_do_nothing])
+		],
+		first_state)
 
-	var test_action := MPTAction.new()
-	test_action.role = &"SERVER"
-	test_action.callables = [action_do_nothing]
-
-	var test_action2 : MPTAction = test_action.dup()
-	test_action2.role = &'PEER1'
-
-	var test_action3 : MPTAction = test_action.dup()
-	test_action3.role = &'PEER2'
-
-	test_move.name = "test_move"
-	test_move.desc = "Description of Test Move"
-	test_move.actions = [test_action, test_action2, test_action3]
-	test_move.dest = first_state
-
-	first_state.moves.push_front(test_move)
+	first_state.moves.append(test_move)
 
 	#server_is_ready.connect( generator.try_moves, CONNECT_ONE_SHOT )
 	# FIXME I have a catch22 here, setup of the states is before
