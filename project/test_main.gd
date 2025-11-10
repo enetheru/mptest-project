@@ -12,7 +12,7 @@ func _init() -> void:
 	})
 
 	generator = MPTGenerator.new(self)
-	generator.moves.append( Util.new_from_dict(MPTMove.new(), {
+	generator.moves.append( Enetheru.dict.new_from_dict(MPTMove.new(), {
 		&'name':"nah yeah",
 		&'name_short':"nah",
 		&'role':&'SERVER'

@@ -12,7 +12,7 @@ config_version=5
 
 config/name="MPTest-Project"
 run/main_scene="uid://db33yepg4vgwf"
-config/features=PackedStringArray("4.4", "Forward Plus")
+config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -30,4 +30,4 @@ gdscript/warnings/unsafe_call_argument=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/enetheru.enhancements/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg")
+enabled=PackedStringArray("res://addons/enetheru.editor-tweaks/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg", "res://addons/enetheru.util/plugin.cfg")

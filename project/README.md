@@ -59,14 +59,14 @@ Manually defining states and moves is tedious, so `MPTGenerator` automates this:
 
 ### Manual Workflow
 1. Create `MPTState`s, assign tests.
-3. Create `MPTMoves` specifying destination states directly 
+3. Create `MPTMoves` specifying destination states directly
 4. Run tests via `MPTRunner`, executing moves and verifying states.
 
 ### State Generation Workflow
 1. Create `MPTVariable`s to represent the destination states
 2. Assign Callables as tests, to validate the resulting step
 3. Assign mappings of role and Callable as instruction on how to reach the state ( only works if variables are independent )
-4. Assign any rules to restrict expansion of variable multiplication 
+4. Assign any rules to restrict expansion of variable multiplication
 2. Use `MPTGenerator` to create `MPTCombo`s representing all valid mode combinations.
 3. Transform `MPTCombo`s into `MPTState`s with associated tests and moves.
 4. Run tests via `MPTRunner`, executing moves and verifying states.
