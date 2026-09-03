@@ -3,28 +3,13 @@
 [ext_resource type="Script" uid="uid://cob8mwg7uhxn5" path="res://test_main.gd" id="1_ig7tw"]
 [ext_resource type="Script" path="res://addons/enetheru.mp_test/scripts/enet_ob.gd" id="2_enet"]
 [ext_resource type="Script" path="res://addons/enetheru.mp_test/example/network_panel.gd" id="3_net"]
+[ext_resource type="PackedScene" uid="uid://c3x10yr5ggvn0" path="res://addons/enetheru.mp_test/ui/mptest_ui.tscn" id="4_ui"]
+[ext_resource type="Script" uid="uid://bco8eksmgns0e" path="res://addons/enetheru.mp_test/scripts/shims/container.gd" id="5_box"]
+[ext_resource type="Script" uid="uid://d3t4odo7p7ja0" path="res://addons/enetheru.mp_test/scripts/ForceDirectedGraph.gd" id="6_graph"]
 
 [node name="Main" type="Node3D" unique_id=7195624]
 
-[node name="NetProvider" type="Node" parent="." unique_id=953699676]
-script = ExtResource("2_enet")
-
-[node name="Network" type="RichTextLabel" parent="." unique_id=1338224977 node_paths=PackedStringArray("netob", "runner")]
-offset_right = 480.0
-offset_bottom = 280.0
-bbcode_enabled = true
-script = ExtResource("3_net")
-netob = NodePath("../NetProvider")
-runner = NodePath("../MP-Test")
-
-[node name="MP-Test" type="Control" parent="." unique_id=918482006 node_paths=PackedStringArray("netob")]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_top = 280.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MPTRunner" type="Node" parent="." unique_id=918482006 node_paths=PackedStringArray("netob")]
 script = ExtResource("1_ig7tw")
 netob = NodePath("../NetProvider")
 roles = Dictionary[StringName, int]({
@@ -32,3 +17,44 @@ roles = Dictionary[StringName, int]({
 &"PEER2": 0,
 &"SERVER": 1
 })
+
+[node name="NetProvider" type="Node" parent="." unique_id=953699676]
+script = ExtResource("2_enet")
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=568088002]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 44.0
+offset_bottom = -51.0
+grow_horizontal = 2
+grow_vertical = 2
+tab_alignment = 1
+current_tab = 1
+clip_tabs = false
+
+[node name="Network" type="RichTextLabel" parent="TabContainer" unique_id=1338224977 node_paths=PackedStringArray("netob", "runner")]
+layout_mode = 2
+bbcode_enabled = true
+script = ExtResource("3_net")
+netob = NodePath("../../NetProvider")
+runner = NodePath("../../MPTRunner")
+metadata/_tab_index = 0
+
+[node name="Graph" type="Container" parent="TabContainer" unique_id=1434083214]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("5_box")
+metadata/_tab_index = 1
+
+[node name="ForceDirectedGraph" type="Control" parent="TabContainer/Graph" unique_id=799265796]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("6_graph")
+
+[node name="MPTestUI" parent="TabContainer/Graph" unique_id=425770787 node_paths=PackedStringArray("mpt_runner", "graph_control") instance=ExtResource("4_ui")]
+layout_mode = 2
+mpt_runner = NodePath("../../../MPTRunner")
+graph_control = NodePath("../ForceDirectedGraph")

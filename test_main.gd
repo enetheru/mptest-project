@@ -58,17 +58,15 @@ func _reset( _level:ResetLevel ) -> int:
 
 
 func setup_states() -> void:
-	var var1 := MPTVariable.new("v1", "Testing Variable One")
-	var var2 := MPTVariable.new("v2", "Testing Variable Two")
-	var var3 := MPTVariable.new("v3", "Testing Variable Three")
+	var on:Dictionary = {ø = 0, On = 1}
+	var var1 := MPTVariable.new("v1", "Testing Variable One", on)
+	var var2 := MPTVariable.new("v2", "Testing Variable Two", on)
+	var var3 := MPTVariable.new("v3", "Testing Variable Three", on)
 
-
+	# MPTRule.test passes the combo; true means eliminate.
+	# Drop v3=On unless v1 is already On.
 	var rule1 := MPTRule.new("Depends", [rule_var_is_active.bind(var1)])
-
-	# This rule applies to all Modes
 	var3.elimination_rules[var3.get_mask()] = rule1
-	# The mask is not shifted left because
-	# the variable has yet to be added to the generator
 
 	generator.add_vars( [var1, var2, var3] )
 
@@ -97,9 +95,13 @@ func setup_states() -> void:
 	# I might be able to add a generation step to the test runner?
 
 
-func rule_var_is_active( id : int, variable : MPTVariable ) -> bool:
-	# this rule requires src_var to be in an active state.
-	return id & variable.get_mask()
+func rule_var_is_active( combo:MPTCombo, variable:MPTVariable ) -> bool:
+	var shift_v:Variant = combo.variables.find_key(variable)
+	if shift_v == null:
+		return true
+	var shift:int = shift_v
+	var bits:int = (combo.id >> shift) & variable.get_mask()
+	return bits == 0
 
 
 #class SectorVar extends MPTVariable:
