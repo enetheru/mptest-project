@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://cob8mwg7uhxn5" path="res://test_main.gd" id="1_ig7tw"]
 
-[node name="Main" type="Node3D"]
+[node name="Main" type="Node3D" unique_id=7195624]
 
-[node name="MP-Test" type="Control" parent="."]
+[node name="MP-Test" type="Control" parent="." unique_id=918482006]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0

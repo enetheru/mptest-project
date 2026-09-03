@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="MPTest-Project"
+config/tags=PackedStringArray("enetheru")
 run/main_scene="uid://db33yepg4vgwf"
-config/features=PackedStringArray("4.5", "Forward Plus")
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -21,7 +22,9 @@ GDTaskMgr="*res://addons/enetheru.gdtask/gdtask_mgr.gd"
 
 [debug]
 
-gdscript/warnings/exclude_addons=false
+gdscript/warnings/directory_rules={
+"res://addons": 1
+}
 gdscript/warnings/untyped_declaration=1
 gdscript/warnings/unsafe_property_access=1
 gdscript/warnings/unsafe_method_access=1

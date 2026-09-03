@@ -2,5 +2,6 @@
 .godot/
 /android/
 
-/project/addons/enetheru.enhancements/
-project/addons/
+/addons/enetheru.enhancements/
+addons/
+.idea/
