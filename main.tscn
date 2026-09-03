@@ -1,17 +1,32 @@
 [gd_scene format=3 uid="uid://db33yepg4vgwf"]
 
 [ext_resource type="Script" uid="uid://cob8mwg7uhxn5" path="res://test_main.gd" id="1_ig7tw"]
+[ext_resource type="Script" path="res://addons/enetheru.mp_test/scripts/enet_ob.gd" id="2_enet"]
+[ext_resource type="Script" path="res://addons/enetheru.mp_test/example/network_panel.gd" id="3_net"]
 
 [node name="Main" type="Node3D" unique_id=7195624]
 
-[node name="MP-Test" type="Control" parent="." unique_id=918482006]
+[node name="NetProvider" type="Node" parent="." unique_id=953699676]
+script = ExtResource("2_enet")
+
+[node name="Network" type="RichTextLabel" parent="." unique_id=1338224977 node_paths=PackedStringArray("netob", "runner")]
+offset_right = 480.0
+offset_bottom = 280.0
+bbcode_enabled = true
+script = ExtResource("3_net")
+netob = NodePath("../NetProvider")
+runner = NodePath("../MP-Test")
+
+[node name="MP-Test" type="Control" parent="." unique_id=918482006 node_paths=PackedStringArray("netob")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 280.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ig7tw")
+netob = NodePath("../NetProvider")
 roles = Dictionary[StringName, int]({
 &"PEER1": 0,
 &"PEER2": 0,
