@@ -1,3 +1,4 @@
 [submodule "addons/enetheru.mp_test"]
 	path = addons/enetheru.mp_test
 	url = git@gitlab.com:enetheru/mp_test.git
+	branch = dev
