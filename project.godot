@@ -13,11 +13,12 @@ config_version=5
 config/name="MPTest-Project"
 config/tags=PackedStringArray("enetheru")
 run/main_scene="uid://db33yepg4vgwf"
-config/features=PackedStringArray("4.6", "Forward Plus")
+config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
+EneLog="*uid://babswmnh2kosn"
 GDTaskMgr="*res://addons/enetheru.gdtask/gdtask_mgr.gd"
 
 [debug]
@@ -33,4 +34,41 @@ gdscript/warnings/unsafe_call_argument=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/enetheru.editor-tweaks/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg", "res://addons/enetheru.util/plugin.cfg")
+enabled=PackedStringArray("res://addons/enetheru.editor-tweaks/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg", "res://addons/enetheru.mp_test/plugin.cfg", "res://addons/enetheru.util/plugin.cfg")
+
+[editor_tweaks]
+
+debug=false
+experimental=true
+verbosity=0
+OutputLog/enable_ligatures=true
+OutputLog/add_rotate_bbcode_effect=false
+OutputLog/enable_output_search_bar=false
+OutputLog/enable_clickable_url_links=true
+OutputLog/Colours/notice_critical=Color(0.77, 0.35, 0.35, 1)
+OutputLog/Colours/notice_error=Color(0.77, 0.35, 0.35, 1)
+OutputLog/Colours/notice_warning=Color(0.72, 0.61, 0.48, 1)
+OutputLog/Colours/notice_notice=Color(0.56, 0.67, 0.51, 1)
+OutputLog/Colours/notice_debug=Color(0.6, 0.7, 0.8, 0.8)
+OutputLog/Colours/notice_trace=Color(1, 1, 1, 0.5)
+CodeEditor/use_monospace_glyphs=true
+CodeEditor/add_rich_paste=true
+CodeEditor/enable_linespacing_tweaks=false
+CodeEditor/adjust_linespacing_above=-4
+CodeEditor/adjust_linespacing_below=-4
+CodeEditor/make_method_trace_line=true
+CodeEditor/metadata/_custom_type_script="uid://bknlnwba5l18x"
+
+[plugin]
+
+gdtask_monitor/active_only=false
+gdtask_monitor/group_by_manager=true
+gdtask_monitor/remove_on_completed=false
+gdtask_monitor/remove_on_freed=false
+gdtask_monitor/keep_cancelled=true
+gdtask_monitor/options_open=false
+gdtask_monitor/split_offset=0.0
+gdtask_monitor/source_visible={
+"editor": true,
+"session:0": true
+}
