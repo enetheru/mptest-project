@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://db33yepg4vgwf"]
 
 [ext_resource type="Script" uid="uid://cob8mwg7uhxn5" path="res://test_main.gd" id="1_ig7tw"]
-[ext_resource type="Script" path="res://addons/enetheru.mp_test/scripts/enet_ob.gd" id="2_enet"]
-[ext_resource type="Script" uid="uid://bxeb5nrd2lmso" path="res://addons/enetheru.mp_test/ui/network_panel.gd" id="3_net"]
+[ext_resource type="Script" uid="uid://bfimfxi6oh43q" path="res://test/enet/enet_ob.gd" id="2_enet"]
+[ext_resource type="Script" uid="uid://bxeb5nrd2lmso" path="res://test/enet/network_panel.gd" id="3_net"]
 [ext_resource type="PackedScene" uid="uid://c3x10yr5ggvn0" path="res://addons/enetheru.mp_test/ui/mptest_ui.tscn" id="4_ui"]
-[ext_resource type="Script" uid="uid://bco8eksmgns0e" path="res://addons/enetheru.mp_test/scripts/shims/container.gd" id="5_box"]
-[ext_resource type="Script" uid="uid://d3t4odo7p7ja0" path="res://addons/enetheru.mp_test/scripts/ForceDirectedGraph.gd" id="6_graph"]
+[ext_resource type="Script" uid="uid://bco8eksmgns0e" path="res://addons/enetheru.mp_test/ui/container.gd" id="5_box"]
+[ext_resource type="Script" uid="uid://d3t4odo7p7ja0" path="res://addons/enetheru.mp_test/lib/ForceDirectedGraph.gd" id="6_graph"]
 
 [node name="Main" type="Node3D" unique_id=7195624]
 
@@ -30,7 +30,7 @@ offset_bottom = -51.0
 grow_horizontal = 2
 grow_vertical = 2
 tab_alignment = 1
-current_tab = 1
+current_tab = 0
 clip_tabs = false
 
 [node name="Network" type="RichTextLabel" parent="TabContainer" unique_id=1338224977 node_paths=PackedStringArray("netob", "runner")]
@@ -42,6 +42,7 @@ runner = NodePath("../../MPTRunner")
 metadata/_tab_index = 0
 
 [node name="Graph" type="Container" parent="TabContainer" unique_id=1434083214]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
