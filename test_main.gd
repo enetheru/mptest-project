@@ -1,11 +1,7 @@
+@tool
 extends MPTRunner
 
 func _init() -> void:
-	title = "State Generation"
-	desc = "Figuring out the idea I have for generating the majority of" \
-		+ "the information needed for testing, and providing tools to fill out" \
-		+ " the rest."
-
 	roles.merge({
 		&'PEER1':0,
 		&'PEER2':0,
@@ -19,18 +15,29 @@ func _init() -> void:
 	}) )
 
 
+func _title() -> String:
+	return "State Generation"
+
+
+func _desc() -> String:
+	return "Figuring out the idea I have for generating the majority of" \
+		+ "the information needed for testing, and providing tools to fill out" \
+		+ " the rest."
+
+
 func _compose_status() -> String:
 	return "Status OK"
 
 
-#func _requirements() -> Dictionary:
-	#var unmet : Dictionary
-	#if get_peers( PeerStatus.ASSIGNED ).size() < 2:
-		#unmet["Wants Two Peers"] = "This runner requires two peers assigned to work."
-	#return unmet
+func _requirements() -> Dictionary[String,String]:
+	return {}
 
 
-func _setup( _level : ResetLevel ) -> Constant:
+func _report() -> String:
+	return "#TODO: implement _report()"
+
+
+func _setup( _level:ResetLevel ) -> int:
 	if _level & ResetLevel.FAILURE_STATE: pass
 	if _level & ResetLevel.PROGRAM_STATE: pass
 	if _level & ResetLevel.NETWORK_STATE: pass
@@ -40,7 +47,7 @@ func _setup( _level : ResetLevel ) -> Constant:
 	return Constant.OK
 
 
-func _reset( _level : ResetLevel ) -> Constant:
+func _reset( _level:ResetLevel ) -> int:
 	if _level & ResetLevel.FAILURE_STATE: pass
 	if _level & ResetLevel.PROGRAM_STATE: pass
 	if _level & ResetLevel.NETWORK_STATE: pass
@@ -73,9 +80,9 @@ func setup_states() -> void:
 	#starting_state.moves = [TestMove.new(&"SERVER", [], starting_state)]
 	var test_move := MPTMove.new("test_move","Description of Test Move",
 		[
-			MPTAction.new(&"SERVER", [action_do_nothing]),
-			MPTAction.new(&"PEER1", [action_do_nothing]),
-			MPTAction.new(&"PEER2", [action_do_nothing])
+			MPTAction.new(&"SERVER", [a_do_nothing]),
+			MPTAction.new(&"PEER1", [a_do_nothing]),
+			MPTAction.new(&"PEER2", [a_do_nothing])
 		],
 		first_state)
 

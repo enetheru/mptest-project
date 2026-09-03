@@ -34,7 +34,7 @@ gdscript/warnings/unsafe_call_argument=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/enetheru.editor-tweaks/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg", "res://addons/enetheru.mp_test/plugin.cfg", "res://addons/enetheru.util/plugin.cfg")
+enabled=PackedStringArray("res://addons/enetheru.command-server/plugin.cfg", "res://addons/enetheru.editor-tweaks/plugin.cfg", "res://addons/enetheru.gdtask/plugin.cfg", "res://addons/enetheru.mp_test/plugin.cfg", "res://addons/enetheru.util/plugin.cfg")
 
 [editor_tweaks]
 
