@@ -1,23 +1,41 @@
 @tool
 class_name MPTEnetOb
-extends MPTNetOb
+extends Node
 ##[codeblock lang=text]
 ##│ __  __ ___ _____ ___          _    ___  _
 ##│|  \/  | _ \_   _| __|_ _  ___| |_ / _ \| |__
 ##│| |\/| |  _/ | | | _|| ' \/ -_)  _| (_) | '_ \
 ##│|_|  |_|_|   |_| |___|_||_\___|\__|\___/|_.__/
 ##╰────────────────────────────────────────────────
-##[/codeblock]ENet MultiplayerPeer implementation of MPTNetOb for local host and join.
+##[/codeblock]ENet MultiplayerPeer for local host and join.
 ##
 ## Sets [member MultiplayerAPI.multiplayer_peer] on this node's
-## [member Node.multiplayer] (the SceneTree API by default). No HelloWorld
-## [code]NM[/code] / UDPecan.
-##[br][br]
-## Host, join [code]127.0.0.1[/code], or use an [OfflineMultiplayerPeer] for
-## single-instance tests. The runner still auto-creates
-## [MPTControlPlaneRpc] unless you assign another plane.
+## [member Node.multiplayer] (the SceneTree API by default). The runner's
+## [MPTControlPlaneRpc] rides that same API; this node only establishes the
+## peer. No HelloWorld [code]NM[/code] / UDPecan.
 
 const Util = preload("uid://bnihbelkt5wkt")
+
+#region trace
+const Log = preload( "uid://dotfrtflqu05s" )
+static var class_lvl:int = Log.Level.SILENT
+@export_enum("SILENT:0","CRITICAL:1","ERROR:3","WARNING:7",
+		"NOTICE:15","INFO:31","DEBUG:63","TRACE:127","MASK:255")
+var local_lvl:int = Log.Level.SILENT
+func trace( args:Dictionary = {}, object:Object = self,
+			stack:Array = Log.get_stack_popped( 1 ) ) -> void:
+	Log.trace( args, object, stack )
+func trace_lvl( lvl:int, content:Variant, object:Object = null,
+			stack:Array = Log.get_stack_popped() ) -> void:
+	Log.lvl( lvl, content, object, stack )
+#endregion
+
+
+enum Status {
+	CONNECTED = MultiplayerPeer.ConnectionStatus.CONNECTION_CONNECTED,
+	CONNECTING = MultiplayerPeer.ConnectionStatus.CONNECTION_CONNECTING,
+	DISCONNECTED = MultiplayerPeer.ConnectionStatus.CONNECTION_DISCONNECTED,
+}
 
 
 # ██████  ██████   ██████  ██████  ███████ ██████  ████████ ██ ███████ ███████ #
@@ -43,6 +61,23 @@ enum AutoStart { NONE, OFFLINE, SERVER }
 var _hosting:bool = false
 
 
+#            ███████ ██  ██████  ███    ██  █████  ██      ███████             #
+#            ██      ██ ██       ████   ██ ██   ██ ██      ██                  #
+#            ███████ ██ ██   ███ ██ ██  ██ ███████ ██      ███████             #
+#                 ██ ██ ██    ██ ██  ██ ██ ██   ██ ██           ██             #
+#            ███████ ██  ██████  ██   ████ ██   ██ ███████ ███████             #
+func                        _________SIGNALS_________              ()->void:pass
+
+signal stopping_network
+signal server_started
+signal server_stopped
+signal client_started
+signal connected_to_server
+signal server_disconnected
+signal peer_connected(peer_id:int)
+signal peer_disconnected(peer_id:int)
+
+
 #             ███████ ██    ██ ███████ ███    ██ ████████ ███████              #
 #             ██      ██    ██ ██      ████   ██    ██    ██                   #
 #             █████   ██    ██ █████   ██ ██  ██    ██    ███████              #
@@ -63,12 +98,12 @@ func _on_mp_connected_to_server() -> void:
 
 
 func _on_mp_connection_failed() -> void:
-	_reset_network()
+	reset_network()
 
 
 func _on_mp_server_disconnected() -> void:
 	server_disconnected.emit()
-	_reset_network()
+	reset_network()
 
 
 #      ██████  ██    ██ ███████ ██████  ██████  ██ ██████  ███████ ███████     #
@@ -113,7 +148,14 @@ func _ready() -> void:
 			pass
 
 
-func _reset_network() -> void:
+#         ███    ███ ███████ ████████ ██   ██  ██████  ██████  ███████         #
+#         ████  ████ ██         ██    ██   ██ ██    ██ ██   ██ ██              #
+#         ██ ████ ██ █████      ██    ███████ ██    ██ ██   ██ ███████         #
+#         ██  ██  ██ ██         ██    ██   ██ ██    ██ ██   ██      ██         #
+#         ██      ██ ███████    ██    ██   ██  ██████  ██████  ███████         #
+func                        _________METHODS_________              ()->void:pass
+
+func reset_network() -> void:
 	trace()
 	if not _has_peer():
 		return
@@ -124,7 +166,7 @@ func _reset_network() -> void:
 	_hosting = false
 
 
-func _start_server() -> void:
+func start_server() -> void:
 	trace()
 	if _try_start_server():
 		return
@@ -132,7 +174,7 @@ func _start_server() -> void:
 
 
 func _try_start_server() -> bool:
-	_reset_network()
+	reset_network()
 	var enet := ENetMultiplayerPeer.new()
 	var err:Error = enet.create_server(port, max_clients)
 	if err != OK:
@@ -150,9 +192,9 @@ func _wants_join() -> bool:
 	return "--mpt-join" in args
 
 
-func _start_client() -> void:
+func start_client() -> void:
 	trace()
-	_reset_network()
+	reset_network()
 	var enet := ENetMultiplayerPeer.new()
 	var err:Error = enet.create_client(address, port)
 	if err != OK:
@@ -163,15 +205,15 @@ func _start_client() -> void:
 	client_started.emit()
 
 
-func _is_client() -> bool:
+func is_client() -> bool:
 	return _has_peer() and not multiplayer.is_server()
 
 
-func _is_server() -> bool:
+func is_server() -> bool:
 	return _has_peer() and multiplayer.is_server()
 
 
-func _get_status() -> int:
+func get_status() -> int:
 	if not _has_peer():
 		return Status.DISCONNECTED
 	match multiplayer.multiplayer_peer.get_connection_status():
@@ -183,33 +225,26 @@ func _get_status() -> int:
 			return Status.DISCONNECTED
 
 
-func _get_status_string() -> String:
-	return str(Status.find_key(_get_status()))
+func get_status_string() -> String:
+	return str(Status.find_key(get_status()))
 
 
-func _get_peers() -> PackedInt32Array:
+func get_peers() -> PackedInt32Array:
 	if not _has_peer():
 		return PackedInt32Array()
 	return multiplayer.get_peers()
 
 
-func _get_unique_id() -> int:
+func get_unique_id() -> int:
 	if not _has_peer():
 		return 0
 	return multiplayer.get_unique_id()
 
 
-#         ███    ███ ███████ ████████ ██   ██  ██████  ██████  ███████         #
-#         ████  ████ ██         ██    ██   ██ ██    ██ ██   ██ ██              #
-#         ██ ████ ██ █████      ██    ███████ ██    ██ ██   ██ ███████         #
-#         ██  ██  ██ ██         ██    ██   ██ ██    ██ ██   ██      ██         #
-#         ██      ██ ███████    ██    ██   ██  ██████  ██████  ███████         #
-func                        _________METHODS_________              ()->void:pass
-
 ## Single-instance peer (unique id 1). Emits [signal server_started].
 func start_offline() -> void:
 	trace()
-	_reset_network()
+	reset_network()
 	multiplayer.multiplayer_peer = OfflineMultiplayerPeer.new()
 	_hosting = true
 	server_started.emit()

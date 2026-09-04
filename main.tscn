@@ -5,13 +5,12 @@
 [ext_resource type="Script" uid="uid://bxeb5nrd2lmso" path="res://test_mp/enet/network_panel.gd" id="3_net"]
 [ext_resource type="PackedScene" uid="uid://c3x10yr5ggvn0" path="res://addons/enetheru.mp_test/ui/mptest_ui.tscn" id="4_ui"]
 [ext_resource type="Script" uid="uid://bco8eksmgns0e" path="res://addons/enetheru.mp_test/ui/container.gd" id="5_box"]
-[ext_resource type="Script" uid="uid://d3t4odo7p7ja0" path="res://addons/enetheru.mp_test/lib/ForceDirectedGraph.gd" id="6_graph"]
+[ext_resource type="Script" uid="uid://d3t4odo7p7ja0" path="res://addons/enetheru.mp_test/scripts/ForceDirectedGraph.gd" id="6_graph"]
 
 [node name="Main" type="Node3D" unique_id=7195624]
 
-[node name="MPTRunner" type="Node" parent="." unique_id=918482006 node_paths=PackedStringArray("netob")]
+[node name="MPTRunner" type="Node" parent="." unique_id=918482006]
 script = ExtResource("1_ig7tw")
-netob = NodePath("../NetProvider")
 roles = Dictionary[StringName, int]({
 &"PEER1": 0,
 &"PEER2": 0,

@@ -37,24 +37,24 @@ func _report() -> String:
 	return "#TODO: implement _report()"
 
 
-func _setup( _level:ResetLevel ) -> int:
-	if _level & ResetLevel.FAILURE_STATE: pass
-	if _level & ResetLevel.PROGRAM_STATE: pass
-	if _level & ResetLevel.NETWORK_STATE: pass
-	if _level & ResetLevel.TEST_RESULTS:  pass
-	if _level & ResetLevel.STATE_GRAPH:   setup_states()
-	if _level & ResetLevel.REPORTING:     pass
-	return Constant.OK
+func _setup( _level:MPTCodes.ResetLevel ) -> int:
+	if _level & MPTCodes.ResetLevel.FAILURE_STATE: pass
+	if _level & MPTCodes.ResetLevel.PROGRAM_STATE: pass
+	if _level & MPTCodes.ResetLevel.NETWORK_STATE: pass
+	if _level & MPTCodes.ResetLevel.TEST_RESULTS:  pass
+	if _level & MPTCodes.ResetLevel.STATE_GRAPH:   setup_states()
+	if _level & MPTCodes.ResetLevel.REPORTING:     pass
+	return MPTCodes.OK
 
 
-func _reset( _level:ResetLevel ) -> int:
-	if _level & ResetLevel.FAILURE_STATE: pass
-	if _level & ResetLevel.PROGRAM_STATE: pass
-	if _level & ResetLevel.NETWORK_STATE: pass
-	if _level & ResetLevel.TEST_RESULTS:  pass
-	if _level & ResetLevel.STATE_GRAPH:   pass
-	if _level & ResetLevel.REPORTING:     pass
-	return Constant.OK
+func _reset( _level:MPTCodes.ResetLevel ) -> int:
+	if _level & MPTCodes.ResetLevel.FAILURE_STATE: pass
+	if _level & MPTCodes.ResetLevel.PROGRAM_STATE: pass
+	if _level & MPTCodes.ResetLevel.NETWORK_STATE: pass
+	if _level & MPTCodes.ResetLevel.TEST_RESULTS:  pass
+	if _level & MPTCodes.ResetLevel.STATE_GRAPH:   pass
+	if _level & MPTCodes.ResetLevel.REPORTING:     pass
+	return MPTCodes.OK
 
 
 func setup_states() -> void:
